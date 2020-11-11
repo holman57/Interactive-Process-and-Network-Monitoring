@@ -1,6 +1,13 @@
 import os
 import time
+from datetime import datetime
 from collections import defaultdict
+
+ct = datetime.now()
+print("current time:", ct)
+
+ts = ct.timestamp()
+print("timestamp:", ts)
 
 processes = defaultdict(str)
 
@@ -22,7 +29,9 @@ while True:
     for p in current_state:
         if processes[p] == '':
             if new_state_message:
-                print("New Process Detected")
+                ct = time.time()
+                dt_object = datetime.fromtimestamp(ct)
+                print("New Process Detected", dt_object)
             processes[p] = current_state[p]
             print("\t", p, processes[p])
             new_state_message = False
@@ -32,7 +41,9 @@ while True:
     for p in processes:
         if processes[p] != current_state[p]:
             if new_state_message:
-                print("Process Ended")
+                ct = time.time()
+                dt_object = datetime.fromtimestamp(ct)
+                print("Process Ended", dt_object)
             print("\t", p, processes[p])
             proc_ended.append(p)
             new_state_message = False
