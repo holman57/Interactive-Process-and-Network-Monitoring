@@ -17,11 +17,8 @@ while True:
     for pid in pids:
         try:
             proc = open(os.path.join('/proc', pid, 'cmdline'), 'rb')
-            Lines = proc.readlines()
-            for line in Lines:
-                line = line.strip().decode()
-                if len(line) > 0:
-                    current_state[pid] = line
+            for line in proc.readlines():
+                current_state[pid] = line.strip().decode()
         except IOError:
             continue
 
