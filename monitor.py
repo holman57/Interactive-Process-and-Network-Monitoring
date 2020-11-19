@@ -11,6 +11,7 @@ print("timestamp:", ts)
 
 processes = defaultdict(str)
 
+
 while True:
     pids = [pid for pid in os.listdir('/proc') if pid.isdigit()]
     current_state = defaultdict(str)
