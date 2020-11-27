@@ -18,20 +18,16 @@ ipc_var = ''
 
 def thread_function():
     global ipc_var
-
     host = socket.gethostname()
     port = 5000
-
     server_socket = socket.socket()
     server_socket.bind((host, port))
-
     server_socket.listen(2)
     conn, address = server_socket.accept()
 
     while True:
         data = conn.recv(1024).decode()
         if not data:
-            # if data is not received break
             break
         else:
             print("received: " + str(data))

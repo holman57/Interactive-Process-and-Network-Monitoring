@@ -15,7 +15,6 @@ def client_program():
         # data = client_socket.recv(1024).decode()
         #
         # print('Received from server: ' + data)
-
         message = input(" -> ")
 
     client_socket.close()
