@@ -1,31 +1,48 @@
 import socket
 
+SERVER_IP = '127.0.0.1'
+SERVER_PORT = 8888
+BUFFER_SIZE = 1024
+CLOSE_COMMAND = 'close'
+CLOSED_RESPONSE = 'closed'
+ACCEPTED_RESPONSE = 'accepted'
+ENCODING = 'utf-8'
 
-def server_program():
-    host = socket.gethostname()
-    port = 5000
 
-    server_socket = socket.socket()
-    # The bind() function takes tuple as argument
-    server_socket.bind((host, port))
+def init_server():
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((SERVER_IP, SERVER_PORT))
+    server_socket.listen(0)
+    print(f"Listening on {SERVER_IP}:{SERVER_PORT}")
+    return server_socket
 
-    # configure how many clients the server can listen simultaneously
-    server_socket.listen(2)
-    conn, address = server_socket.accept()
-    print("Connection from: " + str(address))
 
+def process_request(client_socket):
     while True:
-        # receive data stream. it won't accept data packet greater than 1024 bytes
-        data = conn.recv(1024).decode()
-        if not data:
-            # if data is not received break
+        request_data = client_socket.recv(BUFFER_SIZE)
+        request_data = request_data.decode(ENCODING)
+        if request_data.lower() == CLOSE_COMMAND:
+            client_socket.send(CLOSED_RESPONSE.encode(ENCODING))
             break
-        print("from connected user: " + str(data))
-        data = input(' -> ')
-        conn.send(data.encode())
+        print(f"Received: {request_data}")
+        client_socket.send(ACCEPTED_RESPONSE.encode(ENCODING))
 
-    conn.close()
+
+def run_server():
+    server_socket = init_server()
+    try:
+        client_socket, client_address = server_socket.accept()
+        print(f"Accepted connection from {client_address[0]}:{client_address[1]}")
+        process_request(client_socket)
+    except KeyboardInterrupt:
+        print("Server is shutting down due to manual interrupt...")
+    finally:
+        if 'client_socket' in locals():
+            client_socket.close()
+            print("Connection to client closed")
+        server_socket.close()
+        print("Server socket closed")
 
 
 if __name__ == '__main__':
-    server_program()
+    run_server()
