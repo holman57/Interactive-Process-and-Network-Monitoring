@@ -108,4 +108,5 @@ if __name__ == '__main__':
 
 - https://docs.python.org/3/library/ipc.html
 - https://docs.python.org/3/howto/sockets.html
+- https://www.datacamp.com/tutorial/a-complete-guide-to-socket-programming-in-python
 
