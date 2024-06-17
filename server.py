@@ -1,48 +1,41 @@
-import socket
+import socketserver
 
-SERVER_IP = '127.0.0.1'
+SERVER_IP = "127.0.0.1"
 SERVER_PORT = 8888
-BUFFER_SIZE = 1024
-CLOSE_COMMAND = 'close'
-CLOSED_RESPONSE = 'closed'
-ACCEPTED_RESPONSE = 'accepted'
-ENCODING = 'utf-8'
+MESSAGE_RESPONSE = "Message Acknowledged"
 
 
-def init_server():
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((SERVER_IP, SERVER_PORT))
-    server_socket.listen(0)
-    print(f"Listening on {SERVER_IP}:{SERVER_PORT}")
-    return server_socket
+class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
+    def setup(self):
+        print(f"New client connected: {self.client_address}")
+
+    def handle(self):
+        while True:
+            data = self.request.recv(1024)
+            if not data:
+                break
+            self.client_interaction(data)
+
+    def client_interaction(self, data):
+        response = data.decode("utf-8")
+        print(f"Received: {response}")
+        msg_to_send = MESSAGE_RESPONSE
+        self.request.sendall(msg_to_send.encode("utf-8"))
+
+    def finish(self):
+        print(f"Client disconnected: {self.client_address}")
 
 
-def process_request(client_socket):
-    while True:
-        request_data = client_socket.recv(BUFFER_SIZE)
-        request_data = request_data.decode(ENCODING)
-        if request_data.lower() == CLOSE_COMMAND:
-            client_socket.send(CLOSED_RESPONSE.encode(ENCODING))
-            break
-        print(f"Received: {request_data}")
-        client_socket.send(ACCEPTED_RESPONSE.encode(ENCODING))
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    pass
 
 
-def run_server():
-    server_socket = init_server()
-    try:
-        client_socket, client_address = server_socket.accept()
-        print(f"Accepted connection from {client_address[0]}:{client_address[1]}")
-        process_request(client_socket)
-    except KeyboardInterrupt:
-        print("Server is shutting down due to manual interrupt...")
-    finally:
-        if 'client_socket' in locals():
-            client_socket.close()
-            print("Connection to client closed")
-        server_socket.close()
-        print("Server socket closed")
+def start_server():
+    server = ThreadedTCPServer((SERVER_IP, SERVER_PORT), ThreadedTCPRequestHandler)
+    print(f"Starting Server: {SERVER_IP}:{SERVER_PORT}")
+    with server:
+        server.serve_forever()
 
 
-if __name__ == '__main__':
-    run_server()
+if __name__ == "__main__":
+    start_server()
