@@ -18,7 +18,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
 
     def client_interaction(self, data):
         response = data.decode("utf-8")
-        print(f"Received: {response}")
+        print(f"{self.client_address[0]}:{self.client_address[1]}\t\t{response}")
         msg_to_send = MESSAGE_RESPONSE
         self.request.sendall(msg_to_send.encode("utf-8"))
 
