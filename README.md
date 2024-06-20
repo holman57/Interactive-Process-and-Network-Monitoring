@@ -1,6 +1,6 @@
-# Interactive Process and Networking Monitoring
+# Interactive Process and Network Monitoring
 
-Interactive process and networking monitoring is a technique used to observe the behavior of running processes and network connections in a system in real time. It involves actively monitoring and analyzing various aspects of processes and network traffic to identify any potential issues, performance bottlenecks, or security concerns.
+Interactive process and network monitoring is a technique used to observe the behavior of running processes and network connections in a system in real time. It involves actively monitoring and analyzing various aspects of processes and network traffic to identify any potential issues, performance bottlenecks, or security concerns.
 
 
 - **Real-time insights**:
