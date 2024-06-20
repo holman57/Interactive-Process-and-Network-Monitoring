@@ -1,31 +1,41 @@
-import socket
+import socketserver
+
+SERVER_IP = "127.0.0.1"
+SERVER_PORT = 8888
+MESSAGE_RESPONSE = "Message Acknowledged"
 
 
-def server_program():
-    host = socket.gethostname()
-    port = 8888
+class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
+    def setup(self):
+        print(f"New client connected: {self.client_address}")
 
-    server_socket = socket.socket()
-    # The bind() function takes tuple as argument
-    server_socket.bind((host, port))
+    def handle(self):
+        while True:
+            data = self.request.recv(1024)
+            if not data:
+                break
+            self.client_interaction(data)
 
-    # configure how many clients the server can listen simultaneously
-    server_socket.listen(2)
-    conn, address = server_socket.accept()
-    print("Connection from: " + str(address))
+    def client_interaction(self, data):
+        response = data.decode("utf-8")
+        print(f"{self.client_address[0]}:{self.client_address[1]}\t\t{response}")
+        msg_to_send = MESSAGE_RESPONSE
+        self.request.sendall(msg_to_send.encode("utf-8"))
 
-    while True:
-        # receive data stream. it won't accept data packet greater than 1024 bytes
-        data = conn.recv(1024).decode()
-        if not data:
-            # if data is not received break
-            break
-        print("from connected user: " + str(data))
-        data = input(' -> ')
-        conn.send(data.encode())
-
-    conn.close()
+    def finish(self):
+        print(f"Client disconnected: {self.client_address}")
 
 
-if __name__ == '__main__':
-    server_program()
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    pass
+
+
+def start_server():
+    server = ThreadedTCPServer((SERVER_IP, SERVER_PORT), ThreadedTCPRequestHandler)
+    print(f"Starting Server: {SERVER_IP}:{SERVER_PORT}")
+    with server:
+        server.serve_forever()
+
+
+if __name__ == "__main__":
+    start_server()
