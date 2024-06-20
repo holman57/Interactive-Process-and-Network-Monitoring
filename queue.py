@@ -47,14 +47,14 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 def proc_queue():
     while True:
         time.sleep(randrange(1, 3))
+        if EXIT:
+            os._exit(0)
         if len(QUEUE) > 0:
             print(f"Number of commands in the QUEUE is: {len(QUEUE)}")
             print(*QUEUE, sep='\n')
             cmd = QUEUE.pop(0)
             print(f"Processing item: {cmd}")
             result = subprocess.run(cmd)
-        if EXIT:
-            os._exit(0)
 
 
 if __name__ == '__main__':
