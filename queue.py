@@ -24,7 +24,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
             try:
                 request_data = self.request.recv(BUFFER_SIZE)
             except Exception as e:
-                print(f"{client} Connection aborted unexpectedly: {e}")
+                print(f"{client} Connection aborted unexpectedly\n{e}")
                 break
             request_data = request_data.decode(ENCODING)
             if request_data.lower() == CLOSE_COMMAND:
@@ -37,7 +37,7 @@ class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
                 if cmd_tokens[0] == "python":
                     QUEUE.append(cmd_tokens)
             except IndexError:
-                print(f"Invalid command: {request_data}")
+                print(f"Invalid input: {request_data}")
 
 
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
